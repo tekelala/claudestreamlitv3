@@ -9,19 +9,38 @@ def send_message(prompts):
         "X-API-Key": st.secrets["API_KEY"]
     }
 
-    # Prepare the prompts for Claude
-    conversation = "\n\n".join([f'{item["role"]}: {item["content"]}' for item in prompts]) + "\n\nAssistant:"
+    # Prepare the prompt for Claude
+    conversation = f"Human: {prompt}\n\nAssistant:"
 
+    # Define the body of the request
     body = {
         "prompt": conversation,
         "model": "claude-2.0",
+        "max_tokens_to_sample": 100000,
+        "temperature": 0.6,
         "stop_sequences": ["\n\nHuman:"]
     }
 
-    response = requests.post(api_url, headers=headers, data=json.dumps(body))
-    response.raise_for_status()
+    # Make a POST request to the Claude API
+    try:
+        response = requests.post(api_url, headers=headers, data=json.dumps(body))
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as errh:
+        st.error(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        st.error(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        st.error(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        st.error(f"Something went wrong: {err}")
+    except Exception as e:
+        st.error(f"Unexpected error: {e}")
 
-    return response.json()
+     # Extract Claude's response from the JSON response
+    result = response.json()
+
+    # Return Claude's response as a string
+    return result['completion'].strip()
 
 st.title("Chat with Claude")
 st.write("Welcome to our chat app!")
