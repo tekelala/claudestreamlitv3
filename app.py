@@ -56,8 +56,8 @@ for prompt in st.session_state.prompts:
 
 # Capture and display user's message
 user_message = st.chat_input("Say something")
-    if user_message:
-        with st.spinner('Writting...'):
+if user_message:
+    with st.spinner('Writting...'):
         st.session_state.prompts.append({"role": "Human", "content": user_message})
         response_from_claude = send_message(st.session_state.prompts)
         st.session_state.prompts.append({"role": "Assistant", "content": response_from_claude})
