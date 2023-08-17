@@ -56,11 +56,12 @@ for prompt in st.session_state.prompts:
 
 # Capture and display user's message
 user_message = st.chat_input("Say something")
-if user_message:
-    st.session_state.prompts.append({"role": "Human", "content": user_message})
-    response_from_claude = send_message(st.session_state.prompts)
-    st.session_state.prompts.append({"role": "Assistant", "content": response_from_claude})
-    st.experimental_rerun()
+    with st.spinner('Escribiendo...'):
+        if user_message:
+        st.session_state.prompts.append({"role": "Human", "content": user_message})
+        response_from_claude = send_message(st.session_state.prompts)
+        st.session_state.prompts.append({"role": "Assistant", "content": response_from_claude})
+        st.experimental_rerun()
 
 if st.button('Restart'):
     st.session_state.prompts = []
