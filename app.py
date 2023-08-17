@@ -9,8 +9,7 @@ def send_message(prompts):
         "X-API-Key": st.secrets["API_KEY"]
     }
 
-    last_message = prompts[-1]['content']
-    conversation = f"Human: {last_message}\n\nAssistant:"
+    conversation = "\n\n".join([f'{item["role"]}: {item["content"]}' for item in prompts]) + "\n\nAssistant:"
 
     body = {
         "prompt": conversation,
