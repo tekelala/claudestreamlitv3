@@ -10,7 +10,8 @@ def send_message(prompts):
     }
 
     # Prepare the prompt for Claude
-    conversation = f"Human: {prompt}\n\nAssistant:"
+    last_message = prompts[-1]['content']
+    conversation = f"Human: {last_message}\n\nAssistant:"
 
     # Define the body of the request
     body = {
@@ -57,28 +58,9 @@ for prompt in st.session_state.prompts:
 user_message = st.chat_input("Say something")
 if user_message:
     st.session_state.prompts.append({"role": "Human", "content": user_message})
-    try:
-        result = send_message(st.session_state.prompts)
-
-        # Append Claude's response to the prompts
-        st.session_state.prompts.append({
-            "role": "Assistant",
-            "content": result['completion']
-        })
-        
-        # Rerun the script to update the chat
-        st.experimental_rerun()
-
-    except requests.exceptions.HTTPError as errh:
-        st.error(f"HTTP Error: {errh}")
-    except requests.exceptions.ConnectionError as errc:
-        st.error(f"Error Connecting: {errc}")
-    except requests.exceptions.Timeout as errt:
-        st.error(f"Timeout Error: {errt}")
-    except requests.exceptions.RequestException as err:
-        st.error(f"Something went wrong: {err}")
-    except Exception as e:
-        st.error(f"Unexpected error: {e}")
+    response_from_claude = send_message(st.session_state.prompts)
+    st.session_state.prompts.append({"role": "Assistant", "content": response_from_claude})
+    st.experimental_rerun()
 
 if st.button('Restart'):
     st.session_state.prompts = []
