@@ -55,9 +55,10 @@ if not st.session_state.new_message:
     if user_message:
         st.session_state.new_message = True
         st.session_state.prompts.append({"role": "Human", "content": user_message})
-        response_from_claude = send_message(st.session_state.prompts)
-        st.session_state.prompts.append({"role": "Assistant", "content": response_from_claude})
-        st.experimental_rerun()
+        with st.spinner(text='Writing...'):
+            response_from_claude = send_message(st.session_state.prompts)
+            st.session_state.prompts.append({"role": "Assistant", "content": response_from_claude})
+            st.experimental_rerun()
 
 if st.button('Restart'):
     st.session_state.prompts = []
