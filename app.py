@@ -47,7 +47,7 @@ if "new_message" not in st.session_state:
 
 for prompt in st.session_state.prompts:
     if prompt['role'] == "Human":
-        with st.chat_message("Human"):
+        with st.chat_message("Human", avatar="🧑‍💻"):
             st.write(prompt['content'])
     else: # role == "Assistant"
         with st.chat_message(name="ClaudeBot", avatar="🤖"):
